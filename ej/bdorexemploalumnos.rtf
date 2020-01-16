@@ -1,0 +1,607 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww16200\viewh13200\viewkind0
+\deftab720
+\pard\pardeftab720
+
+\f0\b\fs39 \cf0 partimos de este codigo para crear unha base de datos seguindo o modelo obxecto relacional . Hai varios erros . tes que correxilos .\
+\pard\pardeftab720
+
+\b0\fs36 \cf0 \
+\pard\pardeftab720
+
+\b\fs41 \cf0 1.3.2.1. Implementaci\'f3n objeto relacional con Oracle\
+1.3.2.1.1. Creaci\'f3n de tipos\
+\pard\pardeftab720
+
+\b0\fs36 \cf0 \
+\pard\pardeftab720
+
+\b \cf0 DROP TABLE 
+\b0 pedido _tab;\
+
+\b DELETE FROM 
+\b0 cliente_tab;\
+
+\b DROP TABLE 
+\b0 cliente_tab;\
+
+\b DELETE FROM 
+\b0 item_tab;\
+
+\b DROP TABLE 
+\b0 item_tab;\
+
+\b DROP TYPE 
+\b0 pedido _t;\
+
+\b DROP TYPE 
+\b0 linea_pedido_t;\
+
+\b DROP TYPE 
+\b0 linea_t;\
+
+\b DROP TYPE 
+\b0 item_t;\
+
+\b DROP TYPE 
+\b0 cliente_t;\
+
+\b DROP TYPE 
+\b0 lista_tel_t;\
+
+\b DROP TYPE 
+\b0 direccion_t;
+\fs39 \
+\
+
+\b\fs36 CREATE TYPE 
+\b0 lista_tel_t 
+\b AS VARRAY
+\b0 (10) 
+\b OF 
+\b0 VARCHAR2(20) ;\
+
+\b CREATE TYPE 
+\b0 direccion_t 
+\b AS OBJECT 
+\b0 (\
+calle VARCHAR2(200),\
+ciudad VARCHAR2(200),\
+prov CHAR(2),\
+codpos VARCHAR2(20)) ;\
+
+\b CREATE TYPE 
+\b0 cliente_t 
+\b AS OBJECT 
+\b0 (\
+clinum NUMBER,.\
+clinomb VARCHAR2(200),\
+direccion direccion_t,\
+lista_tel lista_tel_t) ;\
+
+\b CREATE TYPE 
+\b0 item_t 
+\b AS OBJECT 
+\b0 (\
+itemnum NUMBER,\
+precio NUMBER,\
+tasas NUMBER) ;\
+
+\b CREATE TYPE 
+\b0 linea_t 
+\b AS OBJECT 
+\b0 (\
+linum NUMBER,\
+item 
+\b REF 
+\b0 item_t,\
+cantidad NUMBER,\
+descuento NUMBER) ;\
+
+\b CREATE TYPE 
+\b0 lineas_pedido_t 
+\b AS TABLE OF 
+\b0 linea_t ;\
+
+\b CREATE TYPE 
+\b0 pedido_t 
+\b AS OBJECT 
+\b0 (\
+ordnum NUMBER,\
+cliente 
+\b REF 
+\b0 cliente_t,\
+fechpedido DATE,\
+fechentrega DATE,\
+pedido lineas_pedido_t,\
+direcentrega direccion_t) ;\
+\pard\pardeftab720
+
+\b\fs41 \cf0 1.3.2.1.2. Creaci\'f3n de tablas objeto\
+\pard\pardeftab720
+
+\b0\fs39 \cf0 Ahora vamos a crear las tablas donde almacenar los objetos de la aplicaci\'f3n.\
+
+\b\fs36 CREATE TABLE 
+\b0 cliente_tab 
+\b OF 
+\b0 cliente_t\
+(clinum 
+\b PRIMARY KEY
+\b0 );\
+
+\b CREATE TABLE 
+\b0 item_tab 
+\b OF 
+\b0 item_t\
+(itemnum 
+\b PRIMARY KEY
+\b0 ) ;\
+
+\b CREATE TABLE 
+\b0 pedido_tab 
+\b OF 
+\b0 pedido_t (\
+
+\b PRIMARY KEY 
+\b0 (ordnum),\
+
+\b SCOPE FOR 
+\b0 (cliente) 
+\b IS 
+\b0 cliente_tab)\
+
+\b NESTED TABLE 
+\b0 pedido 
+\b STORE AS 
+\b0 pedido_tab ;\
+
+\b ALTER TABLE 
+\b0 pedido_tab\
+
+\b ADD 
+\b0 (
+\b SCOPE FOR 
+\b0 (item) 
+\b IS 
+\b0 item_tab) ;\
+
+\fs39 Esta \'faltima declaraci\'f3n sirve para restringir el dominio de los objetos referenciados desde 
+\b\fs36 item 
+\b0\fs39 a\
+aquellos que se almacenan en la tabla 
+\b\fs36 item_tab
+\b0\fs39 .\
+\pard\pardeftab720
+
+\b\fs41 \cf0 1.3.2.2. Inserci\'f3n de objetos\
+\pard\pardeftab720
+
+\fs36 \cf0 REM 
+\b0 inserci\'f3n en la tabla ITEM_TAB************************\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (1004, 6750.00, 2);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (1011, 4500.23, 2);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (1534, 2234.00, 2);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (1535, 3456.23, 2);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (2004, 33750.00, 3);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (3011, 43500.23, 4);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (4534, 5034.00, 6);\
+
+\b INSERT INTO 
+\b0 item_tab 
+\b VALUES
+\b0 (5535, 34456.23, 5);\
+
+\b REM 
+\b0 inserci\'f3n en la tabla CLIENTE_TAB*********************\
+
+\fs39 N\'f3tese c\'f3mo en estas definiciones se utilizan los constructores del tipo de objeto 
+\b\fs36 direccion_t 
+\b0\fs39 y el\
+tipo de colecci\'f3n 
+\b\fs36 lista_tel_t
+\b0\fs39 .\
+
+\b\fs36 INSERT INTO 
+\b0 cliente_tab\
+
+\b VALUES 
+\b0 (\
+1, \'91Lola Caro\'92,\
+direccion_t(\'9112 Calle Lisboa\'92, \'91Nules\'92, \'91CS\'92, \'9112678\'92),\
+lista_tel_t(\'91415-555-1212\'92)) ;\
+
+\b INSERT INTO 
+\b0 cliente_tab\
+
+\b VALUES 
+\b0 (\
+2, \'91Jorge Luz\'92,\
+direccion_t(\'91323 Calle Sol\'92, \'91Valencia\'92, \'91V\'92, \'9108820\'92),\
+lista_tel_t(\'91609-555-1212\'92,\'92201-555-1212\'92)) ;\
+
+\b INSERT INTO 
+\b0 cliente_tab\
+
+\b VALUES 
+\b0 (\
+3, \'91Juan Perez\'92,\
+direccion_t(\'9112 Calle Colon\'92, \'91Castellon\'92, \'91ES\'92, \'9112001\'92),\
+lista_tel_t(\'91964-555-1212\'92, \'91609-543-1212\'92,\
+\'92201-775-1212\'92,\'91964-445-1212\'92)) ;\
+
+\b INSERT INTO 
+\b0 cliente_tab\
+
+\b VALUES 
+\b0 (\
+4, \'91Ana Gil\'92,\
+direccion_t(\'915 Calle Sueca\'92, \'91Burriana\'92, \'91ES\'92, \'9112345\'92),\
+lista_tel_t()) ;\
+\pard\pardeftab720
+
+\b\fs37 \cf0 REM 
+\b0\fs39 inserci\'f3n en la tabla PEDIDO_TAB***************************\
+N\'f3tese c\'f3mo en estas definiciones se utiliza el operador 
+\b\fs36 REF 
+\b0\fs39 para obtener una referencia a un objeto\
+de 
+\b\fs36 cliente_tab 
+\b0\fs39 y almacenarlo en la columna de otro objeto de 
+\b\fs36 pedido_tab
+\b0\fs39 . La palabra clave 
+\b\fs36 THE 
+\b0\fs39 se\
+utiliza para designar la columna de las tuplas que cumplen la condici\'f3n del 
+\b\fs36 WHERE
+\b0\fs39 , donde se deben\
+realizar la inserci\'f3n. Las tuplas que se insertan son las designadas por el segundo 
+\b\fs36 SELECT
+\b0\fs39 , y el\
+objeto de la orden debe existir antes de comenzar a insertar l\'edneas de pedido.\
+\pard\pardeftab720
+
+\b\fs36 \cf0 REM 
+\b0 Pedidos del cliente 1**********************************\
+
+\b INSERT INTO 
+\b0 pedido_tab\
+
+\b SELECT 
+\b0 1001, 
+\b REF
+\b0 (C),\
+SYSDATE,'10-MAY-1999',\
+linea_pedido_t(),\
+
+\b NULL\
+FROM 
+\b0 cliente_tab C\
+
+\b WHERE 
+\b0 C.clinum= 1 ;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 1001\
+)\
+
+\b SELECT 
+\b0 01, 
+\b REF
+\b0 (S), 12, 0\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 1534;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 ordenes_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 1001\
+)\
+
+\b SELECT 
+\b0 02, 
+\b REF
+\b0 (S), 10, 10\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 1535;\
+
+\b REM 
+\b0 Pedidos del cliente 2************************************\
+
+\b INSERT INTO 
+\b0 pedido_tab\
+
+\b SELECT 
+\b0 2001, 
+\b REF
+\b0 (C),\
+SYSDATE,'20-MAY-1999',\
+lineas_pedido_t(),\
+direccion_t('55 Madison Ave','Madison','WI','53715')\
+
+\b FROM 
+\b0 cliente_tab C\
+
+\b WHERE 
+\b0 C.clinum= 2;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 2001\
+)\
+
+\b SELECT 
+\b0 10, 
+\b REF
+\b0 (S), 1, 0\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 1004;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum= 2001\
+)\
+
+\b VALUES
+\b0 ( linea_t(11, 
+\b NULL
+\b0 , 2, 1) ) ;\
+
+\b REM 
+\b0 Pedidos del cliente 3************************************\
+
+\b INSERT INTO 
+\b0 pedido_tab\
+
+\b SELECT 
+\b0 3001, 
+\b REF
+\b0 (C),\
+
+\b SYSDATE
+\b0 ,'30-MAY-1999',\
+lineas_pedido_t(),\
+
+\b NULL\
+FROM 
+\b0 cliente_tab C\
+
+\b WHERE 
+\b0 C.clinum= 3 ;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 3001\
+)\
+
+\b SELECT 
+\b0 30, 
+\b REF
+\b0 (S), 18, 30\
+
+\b FROM 
+\b0 items_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 3011;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 3001\
+)\
+
+\b SELECT 
+\b0 32, 
+\b REF
+\b0 (S), 10, 100\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 1535;\
+*****************************************\
+
+\b INSERT INTO 
+\b0 pedido_tab\
+
+\b SELECT 
+\b0 3002, 
+\b REF
+\b0 (C),\
+
+\b SYSDATE
+\b0 ,'15-JUN-1999',\
+linea_pedido_t(),\
+
+\b NULL\
+FROM 
+\b0 cliente_tab C\
+
+\b WHERE 
+\b0 C.clinum= 3 ;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 3002\
+)\
+
+\b SELECT 
+\b0 34, 
+\b REF
+\b0 (S), 200, 10\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 4534;\
+
+\b REM 
+\b0 Pedidos del cliente 4************************************\
+
+\b INSERT INTO 
+\b0 pedido_tab\
+
+\b SELECT 
+\b0 4001, 
+\b REF
+\b0 (C),\
+
+\b SYSDATE
+\b0 ,'12-MAY-1999',\
+linea_pedido_t(),\
+direccion_t('34 Nave Oeste','Nules','CS','12876')\
+
+\b FROM 
+\b0 cliente_tab C\
+
+\b WHERE 
+\b0 C.clinum= 4;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 4001\
+)\
+
+\b SELECT 
+\b0 41, 
+\b REF
+\b0 (S), 10, 10\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 2004;\
+
+\b INSERT INTO THE 
+\b0 (\
+
+\b SELECT 
+\b0 P.pedido\
+
+\b FROM 
+\b0 pedido_tab P\
+
+\b WHERE 
+\b0 P.ordnum = 4001\
+)\
+
+\b SELECT 
+\b0 42, 
+\b REF
+\b0 (S), 32, 22\
+
+\b FROM 
+\b0 item_tab S\
+
+\b WHERE 
+\b0 S.itemnum = 5535;\
+}
