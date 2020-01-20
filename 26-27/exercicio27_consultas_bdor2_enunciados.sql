@@ -47,12 +47,20 @@ update cliente_tab set direccion = direccion_t( '123 parchis','ceuta','ce','1234
 5. Consultar todos os datos do cliente numero 1 e engadir  un novo telefono a sua lista de telefonos.                                                         
   
 
+!#
+select * from cliente_tab where clinum=1;
+select value(C) from cliente_tab C where C.clinum=1;
+update cliente_tab set lista_tel=lista_tel_t('415-555-1212','6348635872') where clinum=1;
+
 
 -----------------------------------------------------
 6. Amosar somentes o nome do cliente que realizou o pedido numero 1001.    
               
-Lola Caro                                                                       
+Lola Caro  
 
+!#                                                                     
+select deref(cliente).clinomb from pedido_tab where ordnum = 1001;
+select o.cliente.clinomb from pedido_tab o where o.ordnum=1001;
 
 
 -----------------------------------------------------
@@ -62,7 +70,10 @@ Lola Caro
 CLIENTE_T(1, 'Lola Caro', DIRECCION_T('12 Calle Lisboa', 'Nules', 'CS', '12678')
 , LISTA_TEL_T('415-555-1212', '6348635872'))                                    
                                                                   
-                                                                            
+!#        
+select deref(cliente) from pedido_tab where ordnum = 1001;
+
+                                                                  
 
 
 -----------------------------------------------------
