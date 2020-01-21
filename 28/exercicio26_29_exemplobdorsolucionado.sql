@@ -40,16 +40,16 @@ alteramos a tabla lineas_pedido_tab para indicar que a referencia do campo item 
 */
 
 
-DROP TABLE pedido_tab;
-drop table item_tab;
-drop table cliente_tab;
-DROP TYPE pedido_t;
-DROP TYPE lineas_pedido_t;
-DROP TYPE linea_t;
-DROP TYPE item_t;
-DROP TYPE cliente_t;
-DROP TYPE direccion_t;
-DROP TYPE lista_tel_t;
+DROP TABLE pedido_tab cascade constraint;
+drop table item_tab cascade constraint;
+drop table cliente_tab cascade constraint;
+DROP TYPE pedido_t force;
+DROP TYPE lineas_pedido_t force;
+DROP TYPE linea_t force;
+DROP TYPE item_t force;
+DROP TYPE cliente_t force;
+DROP TYPE direccion_t force;
+DROP TYPE lista_tel_t force;
 -- 
 
 CREATE TYPE lista_tel_t AS VARRAY(10) OF VARCHAR2(20) ;
@@ -211,16 +211,17 @@ PL/SQL.
 
 ALTER TYPE pedido_t ADD MEMBER FUNCTION coste_total RETURN NUMBER cascade;
 
-CREATE TYPE BODY pedido_t AS MEMBER FUNCTION coste_total RETURN NUMBER IS
+CREATE TYPE BODY pedido_t AS
+MEMBER FUNCTION coste_total RETURN NUMBER IS
 i INTEGER;
 item item_t;
 linea linea_t;
 total NUMBER:=0;
 BEGIN
 FOR i IN 1..pedido.COUNT LOOP
-	linea:=pedido(i);
-	SELECT DEREF(linea.item) INTO item FROM DUAL;
-	total:=total + linea.cantidad * item.precio;
+linea:=pedido(i);
+SELECT DEREF(linea.item) INTO item FROM DUAL;
+total:=total + linea.cantidad * item.precio;
 END LOOP;
 RETURN total;
 end;
@@ -265,7 +266,7 @@ select DEREF(o.cliente).clinum  from pedido_tab o where o.ordnum=3001;
 select '7d. amosar  o numero das lineas de pedidos correspondentes ao cliente de numero 3.' from dual;
 select cursor(select p.linum from Table(o.pedido) p) from pedido_tab o where DEREF(o.cliente).clinum=3;
 
-select '8. Visualizar o número de todos los items que se han pedido en la orden número 3001. ' from dual;
+select '8. Visualizar o número de todos los items que se han pedido en la orden /Users/ricardo2009/Downloads/5_tiempo.pdfnúmero 3001. ' from dual;
 select cursor(select p.item.itemnum from Table(o.pedido) p) from pedido_tab o where o.ordnum=3001;
 /*
 a seguinte consulta e o que se pide no exercicio 29 

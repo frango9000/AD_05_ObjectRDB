@@ -211,16 +211,17 @@ PL/SQL.
 
 ALTER TYPE pedido_t ADD MEMBER FUNCTION coste_total RETURN NUMBER cascade;
 
-CREATE TYPE BODY pedido_t AS MEMBER FUNCTION coste_total RETURN NUMBER IS
+CREATE TYPE BODY pedido_t AS
+MEMBER FUNCTION coste_total RETURN NUMBER IS
 i INTEGER;
 item item_t;
 linea linea_t;
 total NUMBER:=0;
 BEGIN
 FOR i IN 1..pedido.COUNT LOOP
-	linea:=pedido(i);
-	SELECT DEREF(linea.item) INTO item FROM DUAL;
-	total:=total + linea.cantidad * item.precio;
+linea:=pedido(i);
+SELECT DEREF(linea.item) INTO item FROM DUAL;
+total:=total + linea.cantidad * item.precio;
 END LOOP;
 RETURN total;
 end;
