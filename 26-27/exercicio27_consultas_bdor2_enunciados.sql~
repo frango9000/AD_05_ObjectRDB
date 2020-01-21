@@ -82,6 +82,7 @@ select deref(cliente) from pedido_tab where ordnum = 1001;
         30                                                                      
         32                                                                      
 
+SQL> select cursor(select p.linum from Table(p.pedido)) from pedido_tab p where ordnum = 3001;
 
 
 
@@ -90,6 +91,8 @@ select deref(cliente) from pedido_tab where ordnum = 1001;
                                                       
        3    
         
+SQL> select deref(cliente).clinum from pedido_tab where ordnum = 3001;
+
 
 
 
@@ -101,6 +104,7 @@ select deref(cliente) from pedido_tab where ordnum = 1001;
 	30
 	32
 
+SQL> select cursor(select p.linum from Table(o.pedido) p) from pedido_tab o where DEREF(o.cliente).clinum = 3;
 
 
 
@@ -111,5 +115,7 @@ select deref(cliente) from pedido_tab where ordnum = 1001;
 	3011
 	1535
 
-                                                                    
+   
+SQL> select cursor(select i.item.itemnum from Table(p.pedido) i) from pedido_tab p where ordnum = 3001;
+                                                                 
      
