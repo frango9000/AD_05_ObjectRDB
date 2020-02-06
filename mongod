@@ -1,0 +1,19 @@
+show databases
+show collections
+
+use baseexemplo
+db.persoas.insert( {"nome":"luis", numeros:[21,56,89] } )
+
+db.persoas.find()
+
+db.persoas.remove({ nome:"luis"})
+
+db.persoas.insert( {"nome":"ana","edade":31, numeros:[54,36,12,75], "enderezo":{"rua":"urzaiz", "numero":24, "piso":3, "porta":"a"} } )
+db.persoas.insert( {nome:"felix", edade:40, enderezo:{"rua":"faisan", numero:14, piso:1 } } )
+
+
+-- busqueda anidada
+
+db.persoas.find({"enderezo.rua":"faisan"})
+
+
