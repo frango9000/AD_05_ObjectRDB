@@ -16,4 +16,22 @@ db.persoas.insert( {nome:"felix", edade:40, enderezo:{"rua":"faisan", numero:14,
 
 db.persoas.find({"enderezo.rua":"faisan"})
 
+Operadores
+
+$eq ==
+db.persoas.find({nome:{$eq:"luis"}})
+
+$ne != (no cumple condic o no tiene el campo de busqueda)
+db.persoas.find({edade:{$ne:31}})
+
+$in In
+db.persoas.find({nome:{$in:["ana", "luis"]}})
+$nin Not In
+db.persoas.find({nome:{$nin:["ana", "luis"]}})
+db.persoas.find({edade:{$nin:[35,40]}})
+
+$gt
+db.persoas.find({edade:{$gt:30}})
+
+
 
